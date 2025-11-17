@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9b5afb8257576447883a71f35013416, type: 3}
   m_Name: Sombreros
   m_EditorClassIdentifier: Assembly-CSharp::Category
-  categoryName: 
+  categoryName: Sombreros

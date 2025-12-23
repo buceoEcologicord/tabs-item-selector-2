@@ -2893,7 +2893,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2008654502}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99974775
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3762,7 +3762,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00020141483}
+  m_AnchoredPosition: {x: 0, y: 0.00014641044}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1446297479 stripped
@@ -4386,7 +4386,7 @@ MonoBehaviour:
     swapImageWhenSelected: 0
     imageUnselected: {fileID: 0}
     imageSelected: {fileID: 0}
-    forceColors: 0
+    forceColors: 1
     normalColor: {r: 1, g: 1, b: 1, a: 1}
     selectedColor: {r: 0.9803922, g: 0.9803922, b: 0.8235295, a: 1}
     enableSections: 1

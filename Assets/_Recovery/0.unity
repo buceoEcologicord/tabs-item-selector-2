@@ -2893,7 +2893,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2008654502}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99974775
+  m_Size: 0.49295565
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3762,7 +3762,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00020141483}
+  m_AnchoredPosition: {x: 0, y: 0.0007875978}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1446297479 stripped
@@ -4341,39 +4341,15 @@ MonoBehaviour:
   categories:
   - {fileID: 11400000, guid: 8fddef34e9cab474282846673acef067, type: 2}
   - {fileID: 11400000, guid: 52599cfe7a500b246a5e3090e6eb0a6b, type: 2}
-  - {fileID: 11400000, guid: 3d38740be6690384cb538d3a1bf2463b, type: 2}
-  - {fileID: 11400000, guid: 9a2c221240e0e634c9d16d91970d203e, type: 2}
-  - {fileID: 11400000, guid: f84fe21a62a97a046957b0ffa45bd643, type: 2}
-  - {fileID: 11400000, guid: dcc81cb531aa37147946efac6a50c735, type: 2}
-  - {fileID: 11400000, guid: bb67ee2e7348a874da83380902c8cb52, type: 2}
+  - {fileID: 11400000, guid: 52599cfe7a500b246a5e3090e6eb0a6b, type: 2}
+  - {fileID: 11400000, guid: 52599cfe7a500b246a5e3090e6eb0a6b, type: 2}
   items:
   - {fileID: 11400000, guid: f3422956ed6f3754dbb8db7c14de05e2, type: 2}
   - {fileID: 11400000, guid: 755123a492bd59f4d9de595e708e4422, type: 2}
   - {fileID: 11400000, guid: b8bdf53ec56a98741a4c337632154672, type: 2}
   - {fileID: 11400000, guid: e224e37756cf1dd42bf5a5b6278c1634, type: 2}
-  - {fileID: 11400000, guid: bee4c2ff2f20f954bbf254d7cd2b0381, type: 2}
-  - {fileID: 11400000, guid: 6dfa058bd28c89d4586d203018857da1, type: 2}
-  - {fileID: 11400000, guid: 38ed55c50691d464e8be618d412c5059, type: 2}
-  - {fileID: 11400000, guid: 07e4187cf8103f747883d73dd641b5b6, type: 2}
-  - {fileID: 11400000, guid: 1158874e42244f7448583b27cb836ac5, type: 2}
-  - {fileID: 11400000, guid: 7a4d2afdc61442446ac4ae41c3441260, type: 2}
-  - {fileID: 11400000, guid: 1678f0d250197884e9ed7a800540a8c3, type: 2}
-  - {fileID: 11400000, guid: 6d50af123606f4f4c9e17cfaf0264106, type: 2}
-  - {fileID: 11400000, guid: 6843e39514f51e449b6da9fcc1b13ab3, type: 2}
-  - {fileID: 11400000, guid: 7a1e5869f412a6746bb6454acb9df1ca, type: 2}
-  - {fileID: 11400000, guid: b2b70c1288a7d204b82d23aa3c1a1a54, type: 2}
-  - {fileID: 11400000, guid: 35d9517cb4c25484b91d8eef2c509a7b, type: 2}
-  - {fileID: 11400000, guid: 0c1af175e45b1c3499e756674e97ce39, type: 2}
-  - {fileID: 11400000, guid: 5823c63cc530ee2468ad6e4454b5b148, type: 2}
-  - {fileID: 11400000, guid: c68149d51bd32d048be0bbc34dcf8903, type: 2}
-  - {fileID: 11400000, guid: f3657ee243e19ae4082c429e2c51815a, type: 2}
-  - {fileID: 11400000, guid: 17d1fec4410d1ab46b96a192a4a6750e, type: 2}
-  - {fileID: 11400000, guid: fe9f29415c95cdf44a4df0cf233e2c07, type: 2}
-  - {fileID: 11400000, guid: c8fd750ccdb988c48be4951f957eec42, type: 2}
-  - {fileID: 11400000, guid: 8a7a319caec1a824eb3ebb3edd5f4d73, type: 2}
-  - {fileID: 11400000, guid: ef66b8e88bf3a644591c7f4b0f1b577e, type: 2}
-  - {fileID: 11400000, guid: 3f2f04fa44e5e2e4bb86b9fd10198212, type: 2}
-  - {fileID: 11400000, guid: 30b4531b1adc0fb48b6116f967dea7ee, type: 2}
+  - {fileID: 11400000, guid: e224e37756cf1dd42bf5a5b6278c1634, type: 2}
+  - {fileID: 11400000, guid: e224e37756cf1dd42bf5a5b6278c1634, type: 2}
   tabPrefab: {fileID: 5655075272098305804, guid: 631b5777fb58b184fb38afe7b2a586a3, type: 3}
   tabsController: {fileID: 1585843238}
   sectionPrefab: {fileID: 1014431453433392087, guid: 305a10fd693134442a8cdf5d547e2d91, type: 3}
@@ -4383,16 +4359,9 @@ MonoBehaviour:
   tabsItemSelectorSettings:
     enableTabs: 1
     tabTextSameAsCategory: 1
-    swapImageWhenSelected: 0
-    imageUnselected: {fileID: 0}
-    imageSelected: {fileID: 0}
-    forceColors: 0
-    normalColor: {r: 1, g: 1, b: 1, a: 1}
-    selectedColor: {r: 0.9803922, g: 0.9803922, b: 0.8235295, a: 1}
     enableSections: 1
     showCategoryLabels: 1
     showItemText: 1
-    useToggleGroups: 1
     sectionsChildForceExpandWidth: 1
     sectionsChildForceExpandHeight: 1
     sectionsChildControlWidth: 1
@@ -4407,7 +4376,6 @@ MonoBehaviour:
     spacing: {x: 0, y: 0}
     gridLayoutGroupConstraint: 0
     gridLayoutGroupConstraintCount: 0
-    tabChangeTolerance: 60
 --- !u!4 &1706841190
 Transform:
   m_ObjectHideFlags: 0
@@ -4691,7 +4659,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1326902642}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.99999994
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

@@ -9,6 +9,12 @@ public class TabsItemSelectorSettings
     [Header("Tabs settings")]
     [SerializeField] bool enableTabs = true;
     [SerializeField] bool tabTextSameAsCategory = true;
+    [SerializeField] bool swapImageWhenSelected = false;
+    [SerializeField] Image imageUnselected;
+    [SerializeField] Image imageSelected;
+    [SerializeField] bool forceColors = false;
+    [SerializeField] Color normalColor = Color.white;
+    [SerializeField] Color selectedColor = Color.lightGoldenRodYellow;
 
     [Header("Sections settings")]
     [SerializeField] bool enableSections = true;
@@ -16,6 +22,7 @@ public class TabsItemSelectorSettings
 
     [Header("Items settings")]
     [SerializeField] bool showItemText = true;
+    [SerializeField] bool useToggleGroups = true;
 
     [Header("Sections Oriented layout group settings")]
     [SerializeField] bool sectionsChildForceExpandWidth = true;
@@ -36,15 +43,23 @@ public class TabsItemSelectorSettings
     [SerializeField] Vector2 spacing;
     [SerializeField] GridLayoutGroup.Constraint gridLayoutGroupConstraint;
     [SerializeField] int gridLayoutGroupConstraintCount = 0;
+    [SerializeField] float tabChangeTolerance = 0;
 
 #region Getters and setters
     public bool EnableTabs { get { return enableTabs; } set { enableTabs = value; } }
     public bool TabTextSameAsCategory { get { return tabTextSameAsCategory; } set { tabTextSameAsCategory = value; } }
+    public bool SwapImageWhenSelected { get { return swapImageWhenSelected; } set { swapImageWhenSelected = value; } }
+    public Image ImageUnselected { get { return imageUnselected; } set { imageUnselected = value; } }
+    public Image ImageSelected { get { return imageSelected; } set { imageSelected = value; } }
+    public bool ForceColors { get { return forceColors; } set { forceColors = value; } }
+    public Color NormalColor { get { return normalColor; } set { normalColor = value; } }
+    public Color SelectedColor { get { return selectedColor; } set { selectedColor = value; } }
 
     public bool EnableSections { get { return enableSections; } set { enableSections = value; } }
     public bool ShowCategoryLabels { get { return showCategoryLabels; } set { showCategoryLabels = value; } }
 
     public bool ShowItemText { get { return showItemText; } set { showItemText = value; } }
+    public bool UseToggleGroups { get { return useToggleGroups; } set { useToggleGroups = value; } }
 
     public bool SectionsChildForceExpandWidth { get { return sectionsChildForceExpandWidth; } set { sectionsChildForceExpandWidth = value; } }
     public bool SectionsChildForceExpandHeight { get { return sectionsChildForceExpandHeight; } set { sectionsChildForceExpandHeight = value; } }
@@ -62,6 +77,7 @@ public class TabsItemSelectorSettings
     public Vector2 Spacing { get { return spacing; } set { spacing = value; } }
     public GridLayoutGroup.Constraint GridLayoutGroupConstraint { get { return gridLayoutGroupConstraint; } set { gridLayoutGroupConstraint = value; } }
     public int GridLayoutGroupConstraintCount { get { return gridLayoutGroupConstraintCount; } set { gridLayoutGroupConstraintCount = value; } }
+    public float TabChangeTolerance { get { return tabChangeTolerance; } set { tabChangeTolerance = value; } }
 #endregion
 
 }

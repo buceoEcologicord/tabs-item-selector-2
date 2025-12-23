@@ -35,7 +35,7 @@ public class UIBuilder : MonoBehaviour
     bool tabsChildControlWidth;
     bool tabsChildControlHeight;
 
-    private void Start()
+    private void Awake()
     {
         tabsItemSelectorSettings = tabsItemSelectorManager.TabsItemSelectorSettings;
    
@@ -68,7 +68,7 @@ public class UIBuilder : MonoBehaviour
         if (UIorientation == ContentOrientation.Vertical) contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
         else contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-        // Set tabsSizeFitter to disable it iff needed on InitializeGroupLayoutUI()
+        // Set tabsSizeFitter to disable it if needed on InitializeGroupLayoutUI()
         tabsSizeFitter = content == tabsContent ?  contentSizeFitter : tabsSizeFitter ;
 
         // Add Layout Group and content size fitter

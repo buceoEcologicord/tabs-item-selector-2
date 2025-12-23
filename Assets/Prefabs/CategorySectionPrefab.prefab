@@ -47,6 +47,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7406616444065855519}
   - component: {fileID: 6258594294030750114}
+  - component: {fileID: 7850077226499013705}
   m_Layer: 5
   m_Name: ItemsGroupLayout
   m_TagString: Untagged
@@ -97,6 +98,19 @@ MonoBehaviour:
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
+--- !u!114 &7850077226499013705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3839931701589652745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ToggleGroup
+  m_AllowSwitchOff: 1
 --- !u!1 &7644108444846208359
 GameObject:
   m_ObjectHideFlags: 0

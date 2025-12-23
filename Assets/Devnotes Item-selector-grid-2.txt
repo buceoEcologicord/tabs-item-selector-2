@@ -1,0 +1,21 @@
+Devnotes Item-selector-grid-2 
+
+tabs:
+- Tabs prefabs must have buttons or toggle (The selected color change is pulled from button.colors or toggle.colors)
+
+To use toggle groups:
+Add toggle group in Section prefab 
+
+Sections:
+- Headers or division objects: add as a Game Object of Section Prefab to separate sections wit headers or lines
+
+Next steps:
+- Fix force color bool is not forcing the colors
+- Test image swap
+- Test if works with tabs as toggles or images
+- Add toggle functionality to tabs (similar to buttons)
+- Add capability for item button/toggle funcionality
+- Decouple using IItem and ICategory interfaces that:
+   -- can be implemented into different types of Item data management or category management (taking assets or abstract clases or public structs, etc)
+   -- Can be implemented in the current item and category SO
+  

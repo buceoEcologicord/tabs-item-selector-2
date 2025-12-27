@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Item
   itemID: 0
   itemName: Zapato Rojo
-  itemIcon: {fileID: 0}
+  itemIcon: {fileID: 21300000, guid: a08bdd8bfc155b94da50417fb0225343, type: 3}
   category: {fileID: 11400000, guid: 52599cfe7a500b246a5e3090e6eb0a6b, type: 2}

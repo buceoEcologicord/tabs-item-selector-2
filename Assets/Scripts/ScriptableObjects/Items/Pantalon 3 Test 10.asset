@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1b1d0dd303c7f5044a2d298c6aec3e7c, type: 3}
-  m_Name: ZapatoAzul
+  m_Name: Pantalon 3 Test 10
   m_EditorClassIdentifier: Assembly-CSharp::Item
   itemID: 0
-  itemName: Zapato Azul
-  itemIcon: {fileID: 21300000, guid: a08bdd8bfc155b94da50417fb0225343, type: 3}
-  category: {fileID: 11400000, guid: 52599cfe7a500b246a5e3090e6eb0a6b, type: 2}
+  itemName: "Pantal\xF3n Azul"
+  itemIcon: {fileID: 21300000, guid: 4e2b56611582e7348b27ee82cc4cc364, type: 3}
+  category: {fileID: 11400000, guid: bb67ee2e7348a874da83380902c8cb52, type: 2}

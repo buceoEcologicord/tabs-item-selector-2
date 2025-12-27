@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Item
   itemID: 0
   itemName: Sombrero Rojo
-  itemIcon: {fileID: 0}
+  itemIcon: {fileID: 21300000, guid: a0057f5bf996ed84da610e57e8b8857d, type: 3}
   category: {fileID: 11400000, guid: 8fddef34e9cab474282846673acef067, type: 2}

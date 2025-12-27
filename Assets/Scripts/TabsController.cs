@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class TabsController : MonoBehaviour
 {
@@ -66,9 +67,10 @@ public class TabsController : MonoBehaviour
             tab.name = category.CategoryName;
             tabsList.Add(tab);
 
-            var tabText = tab.GetComponentInChildren<TextMeshProUGUI>();
-            if (tabText != null)
-                tabText.text = category.CategoryName;
+            if (!tab.TryGetComponent<TabBuilder>(out TabBuilder tabBuilder))
+                Debug.LogError("TabsController: TabPrefab does not have a TabBuilder component. Add it to load tabs correctly");
+            else
+                tabBuilder.LoadTabPrefab(category);
 
             // Create struct instance
             TabComponents components = new TabComponents();

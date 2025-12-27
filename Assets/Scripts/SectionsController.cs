@@ -119,9 +119,11 @@ public class SectionsController : MonoBehaviour
             if (itemCategory != category) { continue; } // Skip items that do not belong to the current category
 
             GameObject itemCell = Instantiate(tabsItemSelectorManager.ItemCellPrefab, transform);
-            var itemText = itemCell.GetComponentInChildren<TextMeshProUGUI>();
-            var itemToggle = itemCell.GetComponentInChildren<Toggle>();
-            if (itemText != null && tabsItemSelectorSettings.ShowItemText) { itemText.text = item.ItemName; }
+            if (!itemCell.TryGetComponent<ItemBuilder>(out ItemBuilder itemBuilder))
+                Debug.LogError("SectionsController: ItemCellPrefab does not have an ItemBuilder component. Add it to load items correctly");
+            else
+                itemBuilder.LoadItemPrefab(item);
+
         }
 
         // Recalculates the elements size sum to recalculate and reset the content size
@@ -140,10 +142,10 @@ public class SectionsController : MonoBehaviour
             if (itemCategory != category) { continue; } // Skip items that do not belong to the current category
 
             GameObject itemCell = Instantiate(tabsItemSelectorManager.ItemCellPrefab, transform);
-            var itemText = itemCell.GetComponentInChildren<TextMeshProUGUI>();
-            var itemToggle = itemCell.GetComponentInChildren<Toggle>();
-            if (itemText != null && tabsItemSelectorSettings.ShowItemText) { itemText.text = item.ItemName; }
-            if (tabsItemSelectorSettings.UseToggleGroups) {itemToggle.group = toggleGroup; }
+            if (!itemCell.TryGetComponent<ItemBuilder>(out ItemBuilder itemBuilder))
+                Debug.LogError("SectionsController: ItemCellPrefab does not have an ItemBuilder component. Add it to load items correctly");
+            else
+                itemBuilder.LoadItemPrefab(item, toggleGroup);
         }
 
         // Recalculates the elements size sum to recalculate and reset the content size

@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Item
   itemID: 0
   itemName: "Pantal\xF3n Azul"
-  itemIcon: {fileID: 0}
+  itemIcon: {fileID: 21300000, guid: 4e2b56611582e7348b27ee82cc4cc364, type: 3}
   category: {fileID: 11400000, guid: 9a2c221240e0e634c9d16d91970d203e, type: 2}

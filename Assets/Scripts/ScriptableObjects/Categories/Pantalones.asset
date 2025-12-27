@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: Pantalones
   m_EditorClassIdentifier: Assembly-CSharp::Category
   categoryName: Pantalones
+  categoryIcon: {fileID: 21300000, guid: 4e2b56611582e7348b27ee82cc4cc364, type: 3}
+  categoryColor: {r: 0, g: 0, b: 0, a: 0}

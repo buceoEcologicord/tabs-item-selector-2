@@ -2,6 +2,7 @@ Devnotes Item-selector-grid-2
 
 tabs:
 - Tabs prefabs must have buttons or toggle (The selected color change is pulled from button.colors or toggle.colors)
+- Advanced: make tabs toggles to "filter" items by categories
 
 To use toggle groups:
 Add toggle group in Section prefab 
@@ -9,12 +10,29 @@ Add toggle group in Section prefab
 Sections:
 - Headers or division objects: add as a Game Object of Section Prefab to separate sections wit headers or lines
 
+Items:
+- Items prefabs must have button or toggle component 
+- Add ItemBuilder component to Item prefab and assign references
+- Configure selected item color/Image from the prefab: You can use button/Toggle transition colors or image swap to show selected/unselected state
+  -- For color change when selected: Assign the item prefab icon gameObject with an Image component to toggle/button target graphics and choose the color transition in the button/toggle options
+     -- For Toggles you can add another GaemObject with Image component as background to change color when selected, define the color on this Image component
+  -- For Image Swap when selected: 
+      --- Assign the item prefab icon gameObject with an Image component to toggle/button target graphics and choose the Sprite swap transition in the button/toggle options
+      --- Modify Item Script to add a second Sprite reference for selected state and assign it in the ItemBuilder component
+      --- Modify the ItemBuilder.LoadItemPrefab to assign the corresponding images for normal and selected states for button or toggle components
+- To add more than one label, icon, button or toggle for each item Example: add price label, rarity icon, more info button, etc: 
+    -- Extend ItemBuilder script with multiple label/icon references
+    -- Modify AssignItemIcons or AssignItemLabels methods. 
+- To add click events to items, add listeners to ItemBuilder.onClick event. 
+  -- You can use ItemBuilder HandleClick, SetButtonActions or SetToggleActions methods to modify behavior of button/toggle components
+
 Next steps:
-- Add sprites/images or other GO to items
+- Add sprites/images or other GO to items (Script ItemLoader as API)
+- Add tab color logic
 - Test if works with tabs as toggles or images
 - Add toggle functionality to tabs (similar to buttons)
-- Add capability for item button/toggle funcionality
 - Decouple using IItem and ICategory interfaces that:
    -- can be implemented into different types of Item data management or category management (taking assets or abstract clases or public structs, etc)
    -- Can be implemented in the current item and category SO
+- Make tabs toggles to filter items by categories (no need for ToggleGroup since I could just creat a new tab Scroll View?)
   

@@ -10,8 +10,8 @@ public class TabsItemSelectorSettings
     [SerializeField] bool enableTabs = true;
     [SerializeField] bool tabTextSameAsCategory = true;
     [SerializeField] bool swapImageWhenSelected = false;
-    [SerializeField] Image imageUnselected;
-    [SerializeField] Image imageSelected;
+    [SerializeField] Sprite imageUnselected;
+    [SerializeField] Sprite imageSelected;
     [SerializeField] bool forceColors = false;
     [SerializeField] Color normalColor = Color.white;
     [SerializeField] Color selectedColor = Color.lightGoldenRodYellow;
@@ -49,8 +49,8 @@ public class TabsItemSelectorSettings
     public bool EnableTabs { get { return enableTabs; } set { enableTabs = value; } }
     public bool TabTextSameAsCategory { get { return tabTextSameAsCategory; } set { tabTextSameAsCategory = value; } }
     public bool SwapImageWhenSelected { get { return swapImageWhenSelected; } set { swapImageWhenSelected = value; } }
-    public Image ImageUnselected { get { return imageUnselected; } set { imageUnselected = value; } }
-    public Image ImageSelected { get { return imageSelected; } set { imageSelected = value; } }
+    public Sprite ImageUnselected { get { return imageUnselected; } set { imageUnselected = value; } }
+    public Sprite ImageSelected { get { return imageSelected; } set { imageSelected = value; } }
     public bool ForceColors { get { return forceColors; } set { forceColors = value; } }
     public Color NormalColor { get { return normalColor; } set { normalColor = value; } }
     public Color SelectedColor { get { return selectedColor; } set { selectedColor = value; } }

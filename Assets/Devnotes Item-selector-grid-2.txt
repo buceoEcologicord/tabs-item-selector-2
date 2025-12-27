@@ -10,8 +10,7 @@ Sections:
 - Headers or division objects: add as a Game Object of Section Prefab to separate sections wit headers or lines
 
 Next steps:
-- Fix force color bool is not forcing the colors
-- Test image swap
+- Add sprites/images or other GO to items
 - Test if works with tabs as toggles or images
 - Add toggle functionality to tabs (similar to buttons)
 - Add capability for item button/toggle funcionality

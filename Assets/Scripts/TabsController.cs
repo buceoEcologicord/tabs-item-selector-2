@@ -1,7 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,11 +9,21 @@ public class TabsController : MonoBehaviour
     [SerializeField] TabsItemSelectorManager tabsItemSelectorManager;
 
     // Advanced settings variables
-    TabsItemSelectorSettings tabsItemSelectorSettings = new TabsItemSelectorSettings();
+    TabsItemSelectorSettings tabsItemSelectorSettings;
 
     // tabs variables
     List<GameObject> tabsList = new List<GameObject>();
-    Dictionary<string,Component> _tabsDictionary = new Dictionary<string,Component>();
+
+    // Struct replaces Component casting
+    private struct TabComponents
+    {
+        public Button button;
+        public Toggle toggle;
+        public Image image;
+    }
+
+    Dictionary<string, TabComponents> _tabsDictionary = new Dictionary<string, TabComponents>();
+
     string _activeSectionName;
 
     bool isButton = false;
@@ -22,26 +31,29 @@ public class TabsController : MonoBehaviour
     bool isImage = false;
 
     bool _swapImageWhenSelected;
-    Image _imageUnselected;
-    Image _imageSelected;
-    
+    Sprite _imageUnselected;
+    Sprite _imageSelected;
+
     bool _forceColors = false;
     Color _normalColor;
     Color _selectedColor;
 
-
     // Getters and setters
     public List<GameObject> TabsList { get { return tabsList; } set { tabsList = value; } }
 
-
     public void AddTabButtonAction(Button button, Action<string> onTabClicked, string sectionName)
-    {        
-        // Adds any anonymous function with no parameters as listener to this button onClick
+    {
         button.onClick.AddListener(() => { onTabClicked?.Invoke(sectionName); });
     }
+
     public void PopulateTabs()
     {
+        tabsItemSelectorSettings = tabsItemSelectorManager.TabsItemSelectorSettings;
         _forceColors = tabsItemSelectorSettings.ForceColors;
+        _normalColor = tabsItemSelectorSettings.NormalColor;
+        _selectedColor = tabsItemSelectorSettings.SelectedColor;
+
+        _swapImageWhenSelected = tabsItemSelectorSettings.SwapImageWhenSelected;
         if (_swapImageWhenSelected)
         {
             _imageUnselected = tabsItemSelectorSettings.ImageUnselected;
@@ -54,100 +66,113 @@ public class TabsController : MonoBehaviour
             tab.name = category.CategoryName;
             tabsList.Add(tab);
 
-
             var tabText = tab.GetComponentInChildren<TextMeshProUGUI>();
-            if (tabText != null) { tabText.text = category.CategoryName; }
+            if (tabText != null)
+                tabText.text = category.CategoryName;
 
-            // Assign component to change visually when the tab is selected, it may use button/toggle colors property or the image if user wants to swap image of Game Object when tab is selected it will assign the image 
-            if(_swapImageWhenSelected)
-            {
-                if (tab.TryGetComponent<Image>(out Image tabImage)) 
-                    _tabsDictionary[tab.name] = tabImage;
-            }
+            // Create struct instance
+            TabComponents components = new TabComponents();
 
-            // Button functionality
+            // BUTTON
             if (tab.TryGetComponent<Button>(out Button tabButton))
             {
-                // Adds sectionController.JumpToSection() as a button listener
-                AddTabButtonAction(tabButton, tabsItemSelectorManager.SectionsController.JumpToSection, tab.name);
                 isButton = true;
-                if (!_swapImageWhenSelected)
-                _tabsDictionary[tab.name] = tabButton;
+                components.button = tabButton;
+
+                AddTabButtonAction(tabButton, tabsItemSelectorManager.SectionsController.JumpToSection, tab.name);
+
+                if (_swapImageWhenSelected)
+                {
+                    if (tab.TryGetComponent<Image>(out Image img))
+                        components.image = img;
+                }
+                else
+                {
+                    // no image swap → use button directly
+                }
             }
-            // Toggle functionality
+            // TOGGLE
             else if (tab.TryGetComponent<Toggle>(out Toggle tabToggle))
             {
-                // Add toggle functionality here if needed
                 isToggle = true;
-                _tabsDictionary[tab.name] = tabToggle;
-            }
+                components.toggle = tabToggle;
 
+                if (_swapImageWhenSelected)
+                {
+                    if (tab.TryGetComponent<Image>(out Image img))
+                        components.image = img;
+                }
+            }
+            // IMAGE ONLY
             else if (tab.TryGetComponent<Image>(out Image tabImage))
             {
                 isImage = true;
-                _tabsDictionary[tab.name] = tabImage;
+                components.image = tabImage;
             }
 
-            // Recalculates the elements size sum to recalculate and reset the content size
-            LayoutRebuilder.ForceRebuildLayoutImmediate(tabsItemSelectorManager.TabsContent.transform as RectTransform);
+            _tabsDictionary[tab.name] = components;
 
+            LayoutRebuilder.ForceRebuildLayoutImmediate(tabsItemSelectorManager.TabsContent.transform as RectTransform);
         }
     }
+
     public void SetActiveSection(string activeSection)
     {
-        if (_activeSectionName == activeSection) return;
+        if (_activeSectionName == activeSection)
+            return;
 
         _activeSectionName = activeSection;
-        Debug.Log($"active section: {activeSection} active tab: {_activeSectionName}");
         UpdateVisuals();
     }
+
     private void UpdateVisuals()
     {
         foreach (var tab in _tabsDictionary)
         {
-            if (_swapImageWhenSelected)
+            var components = tab.Value;
+            bool isActive = tab.Key == _activeSectionName;
+
+            // IMAGE SWAP MODE
+            if (_swapImageWhenSelected && components.image != null)
             {
-                var image = (Image)tab.Value;
-                if (image) image = tab.Key == _activeSectionName ?  _imageSelected : _imageUnselected;
+                components.image.sprite = isActive ? _imageSelected : _imageUnselected;
                 continue;
             }
 
-            if(isButton)
+            // BUTTON MODE
+            if (isButton && components.button != null)
             {
-                Debug.Log("isButton called for tab " + tab.Key);
-
-                var button = (Button)tab.Value;
+                var button = components.button;
                 var colors = button.colors;
                 var targetGraphic = button.targetGraphic;
 
                 if (!_forceColors)
-                {
-                    if (targetGraphic) targetGraphic.color = tab.Key == _activeSectionName ? colors.highlightedColor : colors.normalColor;
-                }
+                    targetGraphic.color = isActive ? colors.highlightedColor : colors.normalColor;
                 else
-                {
-                    if (targetGraphic) targetGraphic.color = tab.Key == _activeSectionName ? _selectedColor : _normalColor;
-                }
+                    targetGraphic.color = isActive ? _selectedColor : _normalColor;
+
                 continue;
             }
 
-            if(isToggle)
+            // TOGGLE MODE
+            if (isToggle && components.toggle != null)
             {
-                var toggle = (Toggle)tab.Value;
+                var toggle = components.toggle;
                 var colors = toggle.colors;
                 var targetGraphic = toggle.targetGraphic;
 
                 if (!_forceColors)
-                    if (targetGraphic) targetGraphic.color = tab.Key == _activeSectionName ? colors.highlightedColor : colors.normalColor;
+                    targetGraphic.color = isActive ? colors.highlightedColor : colors.normalColor;
                 else
-                    if (targetGraphic) targetGraphic.color = tab.Key == _activeSectionName ? _selectedColor : _normalColor;
+                    targetGraphic.color = isActive ? _selectedColor : _normalColor;
 
                 continue;
             }
-            if(isImage)
+
+            // IMAGE MODE
+            if (isImage && components.image != null)
             {
-                var image = (Image)tab.Value;
-                if (image) image.color = tab.Key == _activeSectionName ? _selectedColor : _normalColor;
+                components.image.color = isActive ? _selectedColor : _normalColor;
                 continue;
             }
         }

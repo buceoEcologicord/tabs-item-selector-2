@@ -1,8 +1,19 @@
 Devnotes Item-selector-grid-2 
 
+-------------------------------
+Setup instructions:
+
 tabs:
 - Tabs prefabs must have buttons or toggle (The selected color change is pulled from button.colors or toggle.colors)
-- Advanced: make tabs toggles to "filter" items by categories
+- Add TabBuilder component to Tab prefab and assign references
+- Configure selected tab color/Image from the prefab: You can use button/Toggle transition colors or image swap to show selected/unselected state
+  -- For color change when selected: Assign the tab prefab icon gameObject with an Image component to toggle/button target graphics and choose the color transition in the button/toggle options
+     -- For Toggles you can add another GaemObject with Image component as background to change color when selected, define the color on this Image component
+  -- For Image Swap when selected: 
+      --- Assign the tab prefab icon gameObject with an Image component to toggle/button target graphics and choose the Sprite swap transition in the button/toggle options
+      --- Modify Tab Script to add a second Sprite reference for selected state and assign it in the TabBuilder component
+      --- Modify the TabBuilder.LoadTabPrefab to assign the corresponding images for normal and selected states for button or toggle components
+
 
 To use toggle groups:
 Add toggle group in Section prefab 
@@ -26,8 +37,26 @@ Items:
 - To add click events to items, add listeners to ItemBuilder.onClick event. 
   -- You can use ItemBuilder HandleClick, SetButtonActions or SetToggleActions methods to modify behavior of button/toggle components
 
+------------------------------------------
+
+Adjustments instructions:
+TabManager:
+- ForceColors to set button/toggle colors on tabs directly from TabManager settings
+- TabChangeTolerance: To adjust how far from the top a category is consider to be active
+
+Tab prefab:
+
+Item prefab:
+
+
+----------------------------------------------------
+
 Next steps:
+- Horizontal tabs update slider when changing category to always show selected tab
+- Fix or remove all Group Layout Settings from TabItemSelectorManager, not working (except for TabChangeTolerance)
 - Add sprites/images or other GO to items (Script ItemLoader as API)
+        -- Ex: instead of loading the SO load a prefab that changes the icon color for each item
+        -- May also achieve adding an Image component to the Item SO, and modifying color to each Item SO
 - Add tab color logic
 - Test if works with tabs as toggles or images
 - Add toggle functionality to tabs (similar to buttons)

@@ -58,22 +58,13 @@ Item prefab:
 
 Next steps:
 - Update tab visuals also when sections scroll horizontally (currently only updates when scrolling vertically)
-- Add smooth scrolling when ensuring tabs visible.
-- Why start corner, start axis and child alignment not working?
-- Why is not instantiating the item GameObjects as children of the content GameObject in the Scroll View?
--  Why you removed:  if (!tab.TryGetComponent<TabBuilder>(out TabBuilder tabBuilder))
-                Debug.LogError("TabsController: TabPrefab does not have a TabBuilder component. Add it to load tabs correctly");
-            else
-                tabBuilder.LoadTabPrefab(category);
 
-- Add sprites/images or other GO to items (Script ItemBuilder as API)
-        -- Ex: instead of loading the SO load a prefab that changes the icon color for each item
-        -- May also achieve adding an Image component to the Item SO, and modifying color to each Item SO
+
 - Add tab color logic
-- Test if works with tabs as toggles or images
+- Test if works with tabs as toggles
 - Add toggle functionality to tabs (similar to buttons)
 - Decouple using IItem and ICategory interfaces that:
    -- can be implemented into different types of Item data management or category management (taking assets or abstract clases or public structs, etc)
    -- Can be implemented in the current item and category SO
 - Make tabs toggles to filter items by categories (no need for ToggleGroup since I could just creat a new tab Scroll View?)
--  Pending to add functionality for GridLayout without sections separating in different lines
+-  Pending to add functionality for GridLayout without sections separating in different lines to allow a continuous grid of items without missing spaces in some lines

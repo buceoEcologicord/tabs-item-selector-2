@@ -221,7 +221,6 @@ public class TabsController : MonoBehaviour
             float viewportTop = contentRect.anchoredPosition.y;
             float viewportBottom = viewportTop + viewport.rect.height;
 
-            Debug.Log($"EnsureTabVisible: tabTop={tabTop}, tabBottom={tabBottom}, viewportTop={viewportTop}, viewportBottom={viewportBottom}, contentRect = {contentRect.anchoredPosition}");
             float desiredY = contentRect.anchoredPosition.y;
 
             if (tabTop < viewportTop)
@@ -243,7 +242,6 @@ public class TabsController : MonoBehaviour
             float viewportLeft = -contentRect.anchoredPosition.x;
             float viewportRight = viewportLeft + viewport.rect.width;
 
-            Debug.Log($"EnsureTabVisible: tabLeft={tabLeft}, tabRight={tabRight}, viewportLeft={viewportLeft}, viewportRight    ={viewportRight}, contentRect = {contentRect.anchoredPosition}");
 
             float desiredX = contentRect.anchoredPosition.x;
 

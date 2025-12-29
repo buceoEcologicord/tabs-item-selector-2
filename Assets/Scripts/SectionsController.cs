@@ -14,7 +14,7 @@ public class SectionsController : MonoBehaviour
     List<GameObject> sectionsList = new List<GameObject>();
     // Used to jump between sections and change the active tab
     // The tuple fields represent (sectionName, startPos, endPos)
-    List<(string sectionName, float startPos, float endPos)> _sectionRanges = new();
+    List<(string sectionName, float startY, float endY, float startX, float endX)> _sectionRanges = new();
 
     ScrollRect _scrollRect;
     RectTransform _content;
@@ -59,14 +59,16 @@ public class SectionsController : MonoBehaviour
             float bottomPadding = verticalLayout ? verticalLayout.padding.bottom : 0f;
             float spacing = verticalLayout ? verticalLayout.spacing : 0f;
 
+            Debug.Log($"currentY: {currentY}");
+
             for (int i = 0; i < _sectionRanges.Count; i++)
             {
-                var r = _sectionRanges[i];
+                var range = _sectionRanges[i];
 
-                // r.startPos and r.endPos represent top and bottom for vertical layout
-                if (r.startPos <= viewportTop + tabsItemSelectorSettings.TabChangeTolerance + topPadding + spacing)
+                // range.startPos and range.endPos represent top and bottom for vertical layout
+                if (range.startY <= viewportTop + tabsItemSelectorSettings.TabChangeTolerance + topPadding + spacing)
                 {
-                    active = r.sectionName;
+                    active = range.sectionName;
                 }
                 else
                 {
@@ -96,14 +98,16 @@ public class SectionsController : MonoBehaviour
             float rightPadding = horizontalLayout ? horizontalLayout.padding.right : 0f;
             float spacing = horizontalLayout ? horizontalLayout.spacing : 0f;
 
+            Debug.Log($"currentX: {currentX}, viewport left: {viewportLeft}");
+
             for (int i = 0; i < _sectionRanges.Count; i++)
             {
-                var r = _sectionRanges[i];
-
-                // r.startPos and r.endPos represent left and right for horizontal layout
-                if (r.startPos <= viewportLeft + tabsItemSelectorSettings.TabChangeTolerance + leftPadding + spacing)
+                var range = _sectionRanges[i];
+                Debug.Log($"StartX: {range.startX}");
+                // range.startPos and range.endPos represent left and right for horizontal layout
+                if (range.startX <= viewportLeft + tabsItemSelectorSettings.TabChangeTolerance + leftPadding + spacing)
                 {
-                    active = r.sectionName;
+                    active = range.sectionName;
                 }
                 else
                 {
@@ -246,12 +250,29 @@ public class SectionsController : MonoBehaviour
         _sectionRanges.Clear();
 
         float cursorY = 0f;
-        float spacing = _content.GetComponent<VerticalLayoutGroup>()?.spacing ?? 0f;
-        var verticalayoutGroup = _content.GetComponent<VerticalLayoutGroup>();
-        float topPadding = verticalayoutGroup ? verticalayoutGroup.padding.top : 0f;
-        float bottomPadding = verticalayoutGroup ? verticalayoutGroup.padding.bottom : 0f;
+        float cursorX = 0f;
+        float spacing = 0f;
+        if (_content.TryGetComponent<VerticalLayoutGroup>(out VerticalLayoutGroup verticalLayoutGroup))
+        {
+            spacing = verticalLayoutGroup.spacing;
+
+        }
+        else
+        { 
+            if (_content.TryGetComponent<HorizontalLayoutGroup>(out HorizontalLayoutGroup horizontalLayoutGroup)) 
+            {
+                spacing = horizontalLayoutGroup.spacing;
+            }
+        }
+
+        var layoutGroup = _content.GetComponent<LayoutGroup>();
+        float topPadding = layoutGroup ? layoutGroup.padding.top : 0f;
+        float bottomPadding = layoutGroup ? layoutGroup.padding.bottom : 0f;
+        float leftPadding = layoutGroup ? layoutGroup.padding.left : 0f;
+        float rightPadding = layoutGroup ? layoutGroup.padding.right : 0f;
 
         cursorY += topPadding;
+        cursorX += leftPadding;
 
         foreach (GameObject section in sectionsList)
         {
@@ -259,15 +280,20 @@ public class SectionsController : MonoBehaviour
             {
                 var rectTransform = (RectTransform)section.transform;
                 float height = rectTransform.rect.height;
+                float width = rectTransform.rect.width;
                 float top = cursorY;
                 float bottom = cursorY + height;
-                _sectionRanges.Add((section.name, top, bottom));
+                float left = cursorX;
+                float right = cursorX + width;
+                _sectionRanges.Add((section.name, top, bottom, left, right));
                 cursorY = bottom + spacing;
+                cursorX = right + spacing;
             }
         }
 
-        // Adds bottom padding for the bottom limit of the content (CONSIDER REMOVING)
+        // Adds bottom padding for the bottom limit of the content 
         cursorY += bottomPadding;
+        cursorX += leftPadding;
     }
     public void JumpToSection(string sectionName)
     {
@@ -283,7 +309,7 @@ public class SectionsController : MonoBehaviour
 
         if (isVertical)
         {
-            float targetY = range.startPos;
+            float targetY = range.startY;
             float maxY = Mathf.Max(0f, _content.rect.height - viewport.rect.height);
             targetY = Mathf.Clamp(targetY, 0f, maxY);
             var pos = _content.anchoredPosition;
@@ -292,11 +318,11 @@ public class SectionsController : MonoBehaviour
         }
         else
         {
-            float targetX = range.startPos;
+            float targetX = range.startX;
             float maxX = Mathf.Max(0f, _content.rect.width - viewport.rect.width);
             targetX = Mathf.Clamp(targetX, 0f, maxX);
             var pos = _content.anchoredPosition;
-            pos.x = -targetX;
+            pos.x = targetX;
             _content.anchoredPosition = pos;
         }
 

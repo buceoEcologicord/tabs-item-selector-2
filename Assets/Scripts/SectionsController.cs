@@ -69,9 +69,12 @@ public class SectionsController : MonoBehaviour
                 if (range.startY <= viewportTop + tabsItemSelectorSettings.TabChangeTolerance + topPadding + spacing)
                 {
                     active = range.sectionName;
+                    Debug.Log($"StartY: {range.startY}");
+
                 }
                 else
                 {
+                    Debug.Log($"Breaking at _sectionRange#: {i+1}");
                     break;
                 }
             }
@@ -111,6 +114,8 @@ public class SectionsController : MonoBehaviour
                 }
                 else
                 {
+                    Debug.Log($"Breaking at _sectionRange#: {i + 1}");
+
                     break;
                 }
             }
@@ -322,7 +327,7 @@ public class SectionsController : MonoBehaviour
             float maxX = Mathf.Max(0f, _content.rect.width - viewport.rect.width);
             targetX = Mathf.Clamp(targetX, 0f, maxX);
             var pos = _content.anchoredPosition;
-            pos.x = targetX;
+            pos.x = -targetX;
             _content.anchoredPosition = pos;
         }
 

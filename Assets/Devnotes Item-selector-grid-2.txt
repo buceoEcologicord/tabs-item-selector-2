@@ -57,7 +57,6 @@ Item prefab:
 ----------------------------------------------------
 
 Next steps:
-- Update tab visuals also when sections scroll horizontally (currently only updates when scrolling vertically)
 
 
 - Add tab color logic

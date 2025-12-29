@@ -1,4 +1,6 @@
-Devnotes Item-selector-grid-2 
+Hi! I'm rafamaster3 and I built this component with plenty of love (and time) so everyone can make better games. Please contact me through GitHub for any help! Also share this code and give a mention on the credits to your game to help others!
+
+Have a great coding session ;)
 
 -------------------------------
 Setup instructions:
@@ -65,12 +67,3 @@ TabManager:
 - You can add the Items Grid Layout settings directly from the manager or you can use the GridLayoutGroup component in your section prefab's child
 - Optionally, you can assign indicators to show/hide when you can scroll more to the left or right in the tabs scroll view letting your players know there's more to see if they scroll
 ----------------------------------------------------
-
-Next steps:
-
-
-- Add tab color logic
-- Decouple using IItem and ICategory interfaces that:
-   -- can be implemented into different types of Item data management or category management (taking assets or abstract clases or public structs, etc)
-   -- Can be implemented in the current item and category SO
--  Pending to add functionality for GridLayout without sections separating in different lines to allow a continuous grid of items without missing spaces in some lines

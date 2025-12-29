@@ -33,7 +33,6 @@ public class TabsItemSelectorSettings
 
 
     [Header("Sections settings")]
-    [SerializeField] bool enableSections = true;
     [SerializeField] bool showCategoryLabels = true;
 
     [Header("Items settings")]
@@ -66,7 +65,6 @@ public class TabsItemSelectorSettings
     public float TabChangeTolerance { get { return tabChangeTolerance; } set { tabChangeTolerance = value; } }
     public float TabScrollSmoothTime { get => tabScrollSmoothTime; set => tabScrollSmoothTime = value; }
 
-    public bool EnableSections { get { return enableSections; } set { enableSections = value; } }
     public bool ShowCategoryLabels { get { return showCategoryLabels; } set { showCategoryLabels = value; } }
 
     public bool ShowItemText { get { return showItemText; } set { showItemText = value; } }

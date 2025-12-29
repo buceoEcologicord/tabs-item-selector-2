@@ -1,9 +1,7 @@
-using System.Collections.Generic;
-using TMPro;
-using UnityEditor;
+
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
+using static TabsItemSelectorSettings;
 
 public class UIBuilder : MonoBehaviour
 {
@@ -38,7 +36,7 @@ public class UIBuilder : MonoBehaviour
     private void Awake()
     {
         tabsItemSelectorSettings = tabsItemSelectorManager.TabsItemSelectorSettings;
-   
+        
         // Controller references
         tabsController = tabsItemSelectorManager.TabsController;
         sectionsController = tabsItemSelectorManager.SectionsController;        
@@ -75,12 +73,23 @@ public class UIBuilder : MonoBehaviour
         // based on layout type(Vertical - Horizontal Layout Group Vs.Grid Group) and desired orientation(Vertical / Horizontal)
         if (layoutType == LayoutType.GridLayout) // If Grid Layout Group
         {
+            // Use an existing GridLayoutGroup if present, otherwise add one
+            GridLayoutGroup layOutGroup = content.GetComponent<GridLayoutGroup>();
+            if (layOutGroup == null)
+                layOutGroup = content.AddComponent<GridLayoutGroup>();
+
             // set Gridlayout
-            var layOutGroup = content.AddComponent<GridLayoutGroup>();
-            if (tabsItemSelectorSettings.SetItemCellSize) layOutGroup.cellSize = tabsItemSelectorSettings.CellSize;
-            if (tabsItemSelectorSettings.SetItemSpacing) layOutGroup.spacing = tabsItemSelectorSettings.Spacing;
-            layOutGroup.constraint = tabsItemSelectorSettings.GridLayoutGroupConstraint;
-            if (layOutGroup.constraint != GridLayoutGroup.Constraint.Flexible) layOutGroup.constraintCount = tabsItemSelectorSettings.GridLayoutGroupConstraintCount;
+            if (tabsItemSelectorSettings.SetGridLayoutSettings)
+            {
+                layOutGroup.padding = tabsItemSelectorSettings.ItemGridLayoutSettings.padding;
+                layOutGroup.cellSize = tabsItemSelectorSettings.ItemGridLayoutSettings.cellSize;
+                layOutGroup.spacing = tabsItemSelectorSettings.ItemGridLayoutSettings.spacing;
+                layOutGroup.constraint = tabsItemSelectorSettings.ItemGridLayoutSettings.constraint;
+                layOutGroup.constraintCount = tabsItemSelectorSettings.ItemGridLayoutSettings.constraintCount;
+                layOutGroup.startCorner = tabsItemSelectorSettings.ItemGridLayoutSettings.startCorner;
+                layOutGroup.startAxis = tabsItemSelectorSettings.ItemGridLayoutSettings.startAxis;
+                layOutGroup.childAlignment = tabsItemSelectorSettings.ItemGridLayoutSettings.childAlignment;
+            }
         }
         else // If Sections Layout (Vertical / Horizontal Layout Group)
         {
@@ -92,7 +101,21 @@ public class UIBuilder : MonoBehaviour
     }
     public void InitializeGroupLayoutUI(GameObject content, ContentOrientation UIOrientation)
     {        
-        //ContentSizeFitter contentSizeFitter = content.AddComponent<ContentSizeFitter>();
+        var sectionGridLayoutGroup = content.GetComponentInChildren<GridLayoutGroup>();
+        if (sectionGridLayoutGroup != null && tabsItemSelectorSettings.SetGridLayoutSettings)
+        {
+            var gridLayoutSettings = tabsItemSelectorSettings.ItemGridLayoutSettings;
+
+            
+                sectionGridLayoutGroup.padding = gridLayoutSettings.padding;
+                sectionGridLayoutGroup.cellSize = gridLayoutSettings.cellSize;
+                sectionGridLayoutGroup.spacing = gridLayoutSettings.spacing;
+                sectionGridLayoutGroup.constraint = gridLayoutSettings.constraint;
+                sectionGridLayoutGroup.constraintCount = gridLayoutSettings.constraintCount;
+                sectionGridLayoutGroup.startCorner = gridLayoutSettings.startCorner;
+                sectionGridLayoutGroup.startAxis = gridLayoutSettings.startAxis;
+                sectionGridLayoutGroup.childAlignment = gridLayoutSettings.childAlignment;
+        }
 
         if (UIOrientation == ContentOrientation.Horizontal) // For horizontal orientation
         {
@@ -101,17 +124,20 @@ public class UIBuilder : MonoBehaviour
             if (content != tabsContent) // Logic for sections layout
             {
                 tabsItemSelectorManager.SectionsScrollView.vertical = false; // Block vertical scrolling
+                tabsItemSelectorManager.SectionsScrollView.horizontal = true; // Make sure horizontal scrolling is enabled
 
                 // Sets layout Group for sections
                 layoutGroup.childForceExpandWidth = sectionsChildForceExpandWidth;
                 layoutGroup.childForceExpandHeight = sectionsChildForceExpandHeight;
                 layoutGroup.childControlWidth = sectionsChildControlWidth;
                 layoutGroup.childControlHeight = sectionsChildControlHeight;
+
             }
             else // Logic for tabs layout
             {
                 // Add Content Size Fitters to the content of each ScrollRect
                 tabsItemSelectorManager.TabsScrollView.vertical = false; // Block vertical scrolling
+                tabsItemSelectorManager.TabsScrollView.horizontal = true; // Make sure horizontal scrolling is enabled
 
                 if (tabsChildForceExpandWidth || tabsChildControlWidth)
                 {

@@ -4,17 +4,33 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [System.Serializable]
+public struct GridLayoutSettings
+{
+    public RectOffset padding;
+    public Vector2 cellSize;
+    public Vector2 spacing;
+    public GridLayoutGroup.Corner startCorner;
+    public GridLayoutGroup.Axis startAxis;
+    public TextAnchor childAlignment;
+    public GridLayoutGroup.Constraint constraint;
+    public int constraintCount;
+}
+[System.Serializable]
 public class TabsItemSelectorSettings
 {
     [Header("Tabs settings")]
-    [SerializeField] bool enableTabs = true;
-    [SerializeField] bool tabTextSameAsCategory = true;
+
     [SerializeField] bool swapImageWhenSelected = false;
     [SerializeField] Sprite imageUnselected;
     [SerializeField] Sprite imageSelected;
     [SerializeField] bool forceColors = false;
     [SerializeField] Color normalColor = Color.white;
     [SerializeField] Color selectedColor = Color.lightGoldenRodYellow;
+    
+    [Header("Tab scrolling")]
+    [SerializeField] float tabChangeTolerance = 0;
+    [SerializeField] float tabScrollSmoothTime = 0.18f; // seconds for smooth scroll
+
 
     [Header("Sections settings")]
     [SerializeField] bool enableSections = true;
@@ -36,24 +52,19 @@ public class TabsItemSelectorSettings
     [SerializeField] bool tabsChildControlWidth = true;
     [SerializeField] bool tabsChildControlHeight = true;
 
-    [Header("Grid layout group settings")]
-    [SerializeField] bool setItemCellSize = false;
-    [SerializeField] Vector2 cellSize;
-    [SerializeField] bool setItemSpacing = false;
-    [SerializeField] Vector2 spacing;
-    [SerializeField] GridLayoutGroup.Constraint gridLayoutGroupConstraint;
-    [SerializeField] int gridLayoutGroupConstraintCount = 0;
-    [SerializeField] float tabChangeTolerance = 0;
-
+    [Header("Sections Grid layout group settings")]
+    [SerializeField] bool setGridLayoutSettings = false;
+    [SerializeField] GridLayoutSettings itemGridLayoutSettings;
+       
 #region Getters and setters
-    public bool EnableTabs { get { return enableTabs; } set { enableTabs = value; } }
-    public bool TabTextSameAsCategory { get { return tabTextSameAsCategory; } set { tabTextSameAsCategory = value; } }
     public bool SwapImageWhenSelected { get { return swapImageWhenSelected; } set { swapImageWhenSelected = value; } }
     public Sprite ImageUnselected { get { return imageUnselected; } set { imageUnselected = value; } }
     public Sprite ImageSelected { get { return imageSelected; } set { imageSelected = value; } }
     public bool ForceColors { get { return forceColors; } set { forceColors = value; } }
     public Color NormalColor { get { return normalColor; } set { normalColor = value; } }
     public Color SelectedColor { get { return selectedColor; } set { selectedColor = value; } }
+    public float TabChangeTolerance { get { return tabChangeTolerance; } set { tabChangeTolerance = value; } }
+    public float TabScrollSmoothTime { get => tabScrollSmoothTime; set => tabScrollSmoothTime = value; }
 
     public bool EnableSections { get { return enableSections; } set { enableSections = value; } }
     public bool ShowCategoryLabels { get { return showCategoryLabels; } set { showCategoryLabels = value; } }
@@ -71,18 +82,14 @@ public class TabsItemSelectorSettings
     public bool TabsChildControlWidth { get { return tabsChildControlWidth; } set { tabsChildControlWidth = value; } }
     public bool TabsChildControlHeight { get { return tabsChildControlHeight; } set { tabsChildControlHeight = value; } }
 
-    public bool SetItemCellSize { get { return setItemCellSize; } set { setItemCellSize = value; } }
-    public Vector2 CellSize { get { return cellSize; } set { cellSize = value; } }
-    public bool SetItemSpacing { get { return setItemSpacing; } set { setItemSpacing = value; } }
-    public Vector2 Spacing { get { return spacing; } set { spacing = value; } }
-    public GridLayoutGroup.Constraint GridLayoutGroupConstraint { get { return gridLayoutGroupConstraint; } set { gridLayoutGroupConstraint = value; } }
-    public int GridLayoutGroupConstraintCount { get { return gridLayoutGroupConstraintCount; } set { gridLayoutGroupConstraintCount = value; } }
-    public float TabChangeTolerance { get { return tabChangeTolerance; } set { tabChangeTolerance = value; } }
-#endregion
+    public bool SetGridLayoutSettings { get { return setGridLayoutSettings; } set { setGridLayoutSettings = value; } }
+    public GridLayoutSettings ItemGridLayoutSettings { get { return itemGridLayoutSettings; } set { itemGridLayoutSettings = value; } }
+
+    #endregion
 
 }
 public enum ContentOrientation { Vertical, Horizontal }
-   public enum LayoutType { SectionsLayout, GridLayout }
+   public enum LayoutType { SectionsLayout, GridLayout } // Pending to add functionality for GridLayout without sections separating in different lines
 
 
 public class TabsItemSelectorManager : MonoBehaviour
@@ -112,9 +119,11 @@ public class TabsItemSelectorManager : MonoBehaviour
     [Header("Advanced Settings")]
     [SerializeField] TabsItemSelectorSettings tabsItemSelectorSettings = new TabsItemSelectorSettings();
 
-    //// Layout variables
-    //ContentSizeFitter tabsSizeFitter;
-    //ContentSizeFitter sectionsSizeFitter;
+    [Header("Optional scroll indicators (assign in inspector if needed)")]
+    [SerializeField] GameObject scrollUpIndicator;
+    [SerializeField] GameObject scrollDownIndicator;
+    [SerializeField] GameObject scrollLeftIndicator;
+    [SerializeField] GameObject scrollRightIndicator;
 
     // Tabs variables
     List<GameObject> tabsList = new List<GameObject>();
@@ -144,15 +153,21 @@ public class TabsItemSelectorManager : MonoBehaviour
     public UIBuilder UIBuilder { get { return uIBuilder; } set { uIBuilder = value; } }
 
     public TabsItemSelectorSettings TabsItemSelectorSettings { get { return tabsItemSelectorSettings; } set { tabsItemSelectorSettings = value; } }
-    
-    //public ContentSizeFitter TabsSizeFitter { get { return tabsSizeFitter; } set { tabsSizeFitter = value; } }
-    //public ContentSizeFitter SectionsSizeFitter { get { return sectionsSizeFitter; } set { sectionsSizeFitter = value; } }
+
+    public GameObject ScrollUpIndicator { get { return scrollUpIndicator; } }
+    public GameObject ScrollDownIndicator { get { return scrollDownIndicator; } }
+    public GameObject ScrollLeftIndicator { get { return scrollLeftIndicator; } }
+    public GameObject ScrollRightIndicator { get { return scrollRightIndicator; } }
 
     public List<GameObject> TabsList { get { return tabsList; } set { tabsList = value; } }
     public List<GameObject> SectionsList { get { return sectionsList; } set { sectionsList = value; } }
 #endregion
         
     private void Start()
+    {
+        CreateTabsItemSelector();
+    }
+    public void CreateTabsItemSelector()
     {
         uIBuilder.PopulateUI();
         InitializeUI();

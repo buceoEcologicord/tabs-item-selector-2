@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class TabsController : MonoBehaviour
 {
@@ -39,6 +39,9 @@ public class TabsController : MonoBehaviour
     Color _normalColor;
     Color _selectedColor;
 
+    // coroutine handle for smooth scrolling
+    Coroutine _currentScrollCoroutine;
+
     // Getters and setters
     public List<GameObject> TabsList { get { return tabsList; } set { tabsList = value; } }
 
@@ -49,7 +52,10 @@ public class TabsController : MonoBehaviour
 
     public void PopulateTabs()
     {
-        tabsItemSelectorSettings = tabsItemSelectorManager.TabsItemSelectorSettings;
+        // Read settings from manager if available
+        if (tabsItemSelectorManager != null && tabsItemSelectorManager.TabsItemSelectorSettings != null)
+            tabsItemSelectorSettings = tabsItemSelectorManager.TabsItemSelectorSettings;
+
         _forceColors = tabsItemSelectorSettings.ForceColors;
         _normalColor = tabsItemSelectorSettings.NormalColor;
         _selectedColor = tabsItemSelectorSettings.SelectedColor;
@@ -178,5 +184,107 @@ public class TabsController : MonoBehaviour
                 continue;
             }
         }
+
+        // Ensure the active tab is visible in the tabs scroll view (smooth)
+        if (!string.IsNullOrEmpty(_activeSectionName))
+            EnsureTabVisible(_activeSectionName);
+    }
+
+    private void EnsureTabVisible(string sectionName)
+    {
+        if (tabsItemSelectorManager == null || tabsItemSelectorManager.TabsContent == null || tabsItemSelectorManager.TabsScrollView == null)
+            return;
+
+        Transform tabTransform = tabsItemSelectorManager.TabsContent.transform.Find(sectionName);
+        if (tabTransform == null) return;
+
+        RectTransform contentRect = tabsItemSelectorManager.TabsContent.GetComponent<RectTransform>();
+        RectTransform tabRect = tabTransform.GetComponent<RectTransform>();
+        RectTransform viewport = tabsItemSelectorManager.TabsScrollView.viewport ? tabsItemSelectorManager.TabsScrollView.viewport : (RectTransform)contentRect.parent;
+
+        // Force rebuild so rects have correct sizes
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
+
+        Vector2 targetAnchored = contentRect.anchoredPosition;
+
+        // Vertical scrolling
+        if (tabsItemSelectorManager.TabsScrollView.vertical)
+        {
+            float tabHeight = tabRect.rect.height;
+            float tabTop = -(tabRect.anchoredPosition.y + tabHeight/2);
+            float tabBottom = tabTop + tabRect.rect.height;
+            float viewportTop = contentRect.anchoredPosition.y;
+            float viewportBottom = viewportTop + viewport.rect.height;
+
+            Debug.Log($"EnsureTabVisible: tabTop={tabTop}, tabBottom={tabBottom}, viewportTop={viewportTop}, viewportBottom={viewportBottom}, contentRect = {contentRect.anchoredPosition}");
+            float desiredY = contentRect.anchoredPosition.y;
+
+            if (tabTop < viewportTop)
+                desiredY = tabTop;
+            else if (tabBottom > viewportBottom )
+                desiredY = tabBottom - viewport.rect.height;
+
+            float maxY = Mathf.Max(0f, contentRect.rect.height - viewport.rect.height);
+            desiredY = Mathf.Clamp(desiredY, 0f, maxY);
+
+            targetAnchored = new Vector2(contentRect.anchoredPosition.x, desiredY);
+        }
+        // Horizontal scrolling
+        else if (tabsItemSelectorManager.TabsScrollView.horizontal)
+        {
+            float tabWidth = tabRect.rect.width;
+            float tabLeft = tabRect.anchoredPosition.x - tabWidth/2;
+            float tabRight = tabLeft + tabRect.rect.width;
+            float viewportLeft = -contentRect.anchoredPosition.x;
+            float viewportRight = viewportLeft + viewport.rect.width;
+
+            Debug.Log($"EnsureTabVisible: tabLeft={tabLeft}, tabRight={tabRight}, viewportLeft={viewportLeft}, viewportRight    ={viewportRight}, contentRect = {contentRect.anchoredPosition}");
+
+            float desiredX = contentRect.anchoredPosition.x;
+
+            // Swipe left (move content right)
+            if (tabLeft < viewportLeft)
+                desiredX = (-tabLeft);
+            //Swipe right (move content left)
+            else if (tabRight > viewportRight )
+                desiredX = -( (tabRight - viewport.rect.width));
+
+            float maxX = Mathf.Max(0f, contentRect.rect.width - viewport.rect.width);
+            desiredX = Mathf.Clamp(desiredX, -maxX, 0f);
+
+            targetAnchored = new Vector2(desiredX, contentRect.anchoredPosition.y);
+        }
+
+        // Start smooth coroutine to move content to targetAnchored
+        if (_currentScrollCoroutine != null) StopCoroutine(_currentScrollCoroutine);
+        _currentScrollCoroutine = StartCoroutine(SmoothScrollContentTo(contentRect, targetAnchored, tabsItemSelectorSettings.TabScrollSmoothTime));
+            Debug.Log("Content position: " +contentRect.anchoredPosition);
+    
+    }
+
+    IEnumerator SmoothScrollContentTo(RectTransform contentRect, Vector2 targetAnchored, float duration)
+    {
+        if (contentRect == null) yield break;
+
+        Vector2 start = contentRect.anchoredPosition;
+        if (duration <= 0f)
+        {
+            contentRect.anchoredPosition = targetAnchored;
+            yield break;
+        }
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            // Smooth step for nicer easing
+            float s = t * t * (3f - 2f * t);
+            contentRect.anchoredPosition = Vector2.Lerp(start, targetAnchored, s);
+            yield return null;
+        }
+
+        contentRect.anchoredPosition = targetAnchored;
+        _currentScrollCoroutine = null;
     }
 }

@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class ItemBuilder : MonoBehaviour
 {
@@ -25,6 +24,14 @@ public class ItemBuilder : MonoBehaviour
     {
         if (itemLabel != null)
             itemLabel.text = _item.ItemName;
+    }
+    void AssignGameObject()
+    {
+        if (_item.ItemGameObject != null)
+        {
+            // Instantiate or assign the GameObject as needed
+            GameObject itemGameObject = Instantiate(_item.ItemGameObject, this.transform);
+        }
     }
     void SetButtonActions(Button button)
     {
@@ -51,6 +58,7 @@ public class ItemBuilder : MonoBehaviour
         _item = item;
         AssignItemIcons();
         AssignItemLabels();
+        AssignGameObject();
         SetClickableComponent();
     }
     public void LoadItemPrefab(Item item, ToggleGroup toggleGroup)
@@ -60,6 +68,7 @@ public class ItemBuilder : MonoBehaviour
         _item = item;
         AssignItemIcons();
         AssignItemLabels();
+        AssignGameObject();
         SetClickableComponent(toggleGroup);
     }
     void SetClickableComponent()

@@ -3,6 +3,10 @@ Devnotes Item-selector-grid-2
 -------------------------------
 Setup instructions:
 
+Running the code:
+
+- To launch the UI Call public method TabsItemSelectorManager.CreateTabsItemSelector()
+
 tabs:
 - Tabs prefabs must have buttons or toggle (The selected color change is pulled from button.colors or toggle.colors)
 - Add TabBuilder component to Tab prefab and assign references
@@ -13,6 +17,7 @@ tabs:
       --- Assign the tab prefab icon gameObject with an Image component to toggle/button target graphics and choose the Sprite swap transition in the button/toggle options
       --- Modify Tab Script to add a second Sprite reference for selected state and assign it in the TabBuilder component
       --- Modify the TabBuilder.LoadTabPrefab to assign the corresponding images for normal and selected states for button or toggle components
+- Tip: when setting toggles/buttons make sure the color and alpha is the same for the image color, normal, selected and pressed colors to avoid flickering when switching between active categories
 
 
 To use toggle groups:
@@ -52,9 +57,16 @@ Item prefab:
 ----------------------------------------------------
 
 Next steps:
-- Horizontal tabs update slider when changing category to always show selected tab
-- Fix or remove all Group Layout Settings from TabItemSelectorManager, not working (except for TabChangeTolerance)
-- Add sprites/images or other GO to items (Script ItemLoader as API)
+- Update tab visuals also when sections scroll horizontally (currently only updates when scrolling vertically)
+- Add smooth scrolling when ensuring tabs visible.
+- Why start corner, start axis and child alignment not working?
+- Why is not instantiating the item GameObjects as children of the content GameObject in the Scroll View?
+-  Why you removed:  if (!tab.TryGetComponent<TabBuilder>(out TabBuilder tabBuilder))
+                Debug.LogError("TabsController: TabPrefab does not have a TabBuilder component. Add it to load tabs correctly");
+            else
+                tabBuilder.LoadTabPrefab(category);
+
+- Add sprites/images or other GO to items (Script ItemBuilder as API)
         -- Ex: instead of loading the SO load a prefab that changes the icon color for each item
         -- May also achieve adding an Image component to the Item SO, and modifying color to each Item SO
 - Add tab color logic
@@ -64,4 +76,4 @@ Next steps:
    -- can be implemented into different types of Item data management or category management (taking assets or abstract clases or public structs, etc)
    -- Can be implemented in the current item and category SO
 - Make tabs toggles to filter items by categories (no need for ToggleGroup since I could just creat a new tab Scroll View?)
-  
+-  Pending to add functionality for GridLayout without sections separating in different lines

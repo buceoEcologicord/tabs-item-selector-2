@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +12,9 @@ public class SectionsController : MonoBehaviour
     TabsItemSelectorSettings tabsItemSelectorSettings = new TabsItemSelectorSettings();
 
     List<GameObject> sectionsList = new List<GameObject>();
-    List<(string sectionName, float topY, float bottomY)> _sectionRanges = new(); // Used to jump between sections and chan te active tab
+    // Used to jump between sections and change the active tab
+    // The tuple fields represent (sectionName, startPos, endPos)
+    List<(string sectionName, float startPos, float endPos)> _sectionRanges = new();
 
     ScrollRect _scrollRect;
     RectTransform _content;
@@ -26,47 +27,130 @@ public class SectionsController : MonoBehaviour
     }
     private void OnEnable()
     {
-        _scrollRect.onValueChanged.AddListener(OnScrollChanged);
+        if (_scrollRect != null)
+            _scrollRect.onValueChanged.AddListener(OnScrollChanged);
     }
     private void OnDisable()
     {
-        _scrollRect.onValueChanged.RemoveListener(OnScrollChanged);
+        if (_scrollRect != null)
+            _scrollRect.onValueChanged.RemoveListener(OnScrollChanged);
     }
-    
-    private void OnScrollChanged(Vector2 _) // Consider removing argument Vector2 _
+
+    private void OnScrollChanged(Vector2 _) // Handles both vertical and horizontal scrolling
     {
-        float currentY = _content.anchoredPosition.y;
+        if (_content == null || _sectionRanges == null || _sectionRanges.Count == 0) return;
+
         var viewport = _scrollRect.viewport ? _scrollRect.viewport : (RectTransform)_content.parent;
-        float viewportTop = currentY;
-        float viewportBottom = currentY + viewport.rect.height;
 
-        var topPadding = _content.GetComponent<VerticalLayoutGroup>()?.padding.top;
-        var bottomPadding = _content.GetComponent<VerticalLayoutGroup>()?.padding.bottom;
-        var spacing = _content.GetComponent<VerticalLayoutGroup>()?.spacing ?? 0f;
+        // Determine whether the sections content is arranged vertically or horizontally.
+        bool isVertical = _scrollRect.vertical;
 
-        // Set active section depending on the top y position on viewport
         string active = null;
 
-        for (int i = 0; i < _sectionRanges.Count; i++)
+        if (isVertical)
         {
-            var r = _sectionRanges[i];
-            
-            if (r.topY <= viewportTop + tabsItemSelectorSettings.TabChangeTolerance + topPadding + bottomPadding + spacing)
-            {
-                active = r.sectionName;
-            }
-            else
-            {
-                break;
+            float currentY = _content.anchoredPosition.y;
+            float viewportTop = currentY;
+            float viewportBottom = currentY + viewport.rect.height;
 
+            var verticalLayout = _content.GetComponent<VerticalLayoutGroup>();
+            float topPadding = verticalLayout ? verticalLayout.padding.top : 0f;
+            float bottomPadding = verticalLayout ? verticalLayout.padding.bottom : 0f;
+            float spacing = verticalLayout ? verticalLayout.spacing : 0f;
+
+            for (int i = 0; i < _sectionRanges.Count; i++)
+            {
+                var r = _sectionRanges[i];
+
+                // r.startPos and r.endPos represent top and bottom for vertical layout
+                if (r.startPos <= viewportTop + tabsItemSelectorSettings.TabChangeTolerance + topPadding + spacing)
+                {
+                    active = r.sectionName;
+                }
+                else
+                {
+                    break;
+                }
             }
+
+            // If scrolled to bottom, ensure last section is active
+            float maxY = Mathf.Max(0f, _content.rect.height - viewport.rect.height);
+            if (_content.anchoredPosition.y >= maxY - 0.001f && sectionsList.Count > 0)
+                active = sectionsList[sectionsList.Count - 1].name;
+        }
+        else // horizontal scroll handling
+        {
+            float currentX = -_content.anchoredPosition.x;
+            float viewportLeft = currentX;
+            float viewportRight = currentX + viewport.rect.width;
+
+            var horizontalLayout = _content.GetComponent<HorizontalLayoutGroup>();
+            float leftPadding = horizontalLayout ? horizontalLayout.padding.left : 0f;
+            float rightPadding = horizontalLayout ? horizontalLayout.padding.right : 0f;
+            float spacing = horizontalLayout ? horizontalLayout.spacing : 0f;
+
+            for (int i = 0; i < _sectionRanges.Count; i++)
+            {
+                var r = _sectionRanges[i];
+
+                // r.startPos and r.endPos represent left and right for horizontal layout
+                if (r.startPos <= viewportLeft + tabsItemSelectorSettings.TabChangeTolerance + leftPadding + spacing)
+                {
+                    active = r.sectionName;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            // If scrolled to far right (content end), ensure last section is active
+            float maxX = Mathf.Max(0f, _content.rect.width - viewport.rect.width);
+            if (currentX >= maxX - 0.001f && sectionsList.Count > 0)
+                active = sectionsList[sectionsList.Count - 1].name;
         }
 
         if (!string.IsNullOrEmpty(active))
             tabsItemSelectorManager.TabsController.SetActiveSection(active);
+
+        // Toggle scroll indicators (optional)
+        ToggleScrollIndicators();
     }
+
+    private void ToggleScrollIndicators()
+    {
+        if (tabsItemSelectorManager == null) return;
+
+        // Vertical indicators
+        var up = tabsItemSelectorManager.ScrollUpIndicator;
+        var down = tabsItemSelectorManager.ScrollDownIndicator;
+        if (up || down)
+        {
+            if (_scrollRect.vertical)
+            {
+                float norm = _scrollRect.verticalNormalizedPosition;
+                if (up) up.SetActive(norm < 0.99f);     // show up when not at top
+                if (down) down.SetActive(norm > 0.01f); // show down when not at bottom
+            }
+        }
+
+        // Horizontal indicators
+        var left = tabsItemSelectorManager.ScrollLeftIndicator;
+        var right = tabsItemSelectorManager.ScrollRightIndicator;
+        if (left || right)
+        {
+            if (!_scrollRect.vertical)
+            {
+                float normH = _scrollRect.horizontalNormalizedPosition;
+                if (left) left.SetActive(normH < 0.99f);    // show left when not at leftmost
+                if (right) right.SetActive(normH > 0.01f); // show right when not at rightmost
+            }
+        }
+    }
+
     public void PopulateSections(List<Category> categories, GameObject sectionPrefab, ScrollRect scrollView)
     {
+        sectionsList.Clear();
         foreach (Category category in categories)
         {
             GameObject section = Instantiate(sectionPrefab, scrollView.content);
@@ -76,70 +160,61 @@ public class SectionsController : MonoBehaviour
 
             var sectionText = section.GetComponentInChildren<TextMeshProUGUI>();
             if (sectionText != null) { sectionText.text = category.CategoryName; }
-            if (sectionText != null) { sectionText.gameObject.SetActive(tabsItemSelectorSettings.ShowCategoryLabels);  }
+            if (sectionText != null) { sectionText.gameObject.SetActive(tabsItemSelectorSettings.ShowCategoryLabels); }
 
-            // Look for ItemsGroupLayout GO inside sectionPrefab to set itemsScrollView content and initializes items UI
             var itemsGridLayoutGroup = section.GetComponentInChildren<GridLayoutGroup>();
             var itemsToggleGroup = section.GetComponentInChildren<ToggleGroup>();
-            var itemsContentSizeFitter = section.GetComponentInChildren<ContentSizeFitter>();
 
-            // Populate items with or without toggle groups depending on TabsSelectorManagrSettings: bool useToggleGroups
             if (itemsGridLayoutGroup)
             {
-                if(itemsToggleGroup != null && tabsItemSelectorSettings.UseToggleGroups)
-                    PopulateItems(itemsGridLayoutGroup.transform, category, itemsToggleGroup); 
+                if (itemsToggleGroup != null && tabsItemSelectorSettings.UseToggleGroups)
+                    PopulateItems(itemsGridLayoutGroup.transform, category, itemsToggleGroup);
                 else
                     PopulateItems(itemsGridLayoutGroup.transform, category);
             }
-
         }
-        // Recalculates the elements size sum to recalculate and reset the content size
+
+        // Recalculate layout then compute ranges next frame
         LayoutRebuilder.ForceRebuildLayoutImmediate(_content);
-
         StartCoroutine(ComputeRangesNextFrame());
-
     }
 
     private IEnumerator ComputeRangesNextFrame()
     {
-        yield return null; // wait 1 frame
+        yield return null; // wait 1 frame for Layout to settle
         LayoutRebuilder.ForceRebuildLayoutImmediate(_content);
         ComputeSectionRanges();
+
+        // Set initial active section to first if available
+        if (sectionsList.Count > 0)
+            tabsItemSelectorManager.TabsController.SetActiveSection(sectionsList[0].name);
+
+        ToggleScrollIndicators();
     }
 
-    // Instantiate items inside the corresponding section/Category Layout Group
-    // Override if no Toggle Group is needed
     void PopulateItems(Transform transform, Category category)
     {
         foreach (Item item in tabsItemSelectorManager.Items)
         {
-
             var itemCategory = item.Category;
-
-            if (itemCategory != category) { continue; } // Skip items that do not belong to the current category
+            if (itemCategory != category) continue;
 
             GameObject itemCell = Instantiate(tabsItemSelectorManager.ItemCellPrefab, transform);
             if (!itemCell.TryGetComponent<ItemBuilder>(out ItemBuilder itemBuilder))
                 Debug.LogError("SectionsController: ItemCellPrefab does not have an ItemBuilder component. Add it to load items correctly");
             else
                 itemBuilder.LoadItemPrefab(item);
-
         }
 
-        // Recalculates the elements size sum to recalculate and reset the content size
         LayoutRebuilder.ForceRebuildLayoutImmediate(tabsItemSelectorManager.SectionsContent.transform as RectTransform);
     }
 
-    // Instantiate items inside the corresponding section/Category Layout Group
-    // Override if no Toggle Group is needed
     void PopulateItems(Transform transform, Category category, ToggleGroup toggleGroup)
     {
         foreach (Item item in tabsItemSelectorManager.Items)
         {
-
             var itemCategory = item.Category;
-
-            if (itemCategory != category) { continue; } // Skip items that do not belong to the current category
+            if (itemCategory != category) continue;
 
             GameObject itemCell = Instantiate(tabsItemSelectorManager.ItemCellPrefab, transform);
             if (!itemCell.TryGetComponent<ItemBuilder>(out ItemBuilder itemBuilder))
@@ -187,22 +262,27 @@ public class SectionsController : MonoBehaviour
         if (idx < 0) return;
         var range = _sectionRanges[idx];
 
-        //---
-        // Moves the content so the top of the section relocates to the top of the viewport:
-
-        float targetY = range.topY;
-
-        // Clamp to avoid overscrolling
         var viewport = tabsItemSelectorManager.SectionsScrollView.viewport ? tabsItemSelectorManager.SectionsScrollView.viewport : (RectTransform)_content.parent;
-        float maxY = Mathf.Max(0f, _content.rect.height - viewport.rect.height);
+        bool isVertical = _scrollRect.vertical;
 
-        targetY = Mathf.Clamp(targetY, 0f, maxY);
-
-
-        var pos = _content.anchoredPosition;
-        pos.y = targetY;
-        _content.anchoredPosition = pos;
-        //---
+        if (isVertical)
+        {
+            float targetY = range.startPos;
+            float maxY = Mathf.Max(0f, _content.rect.height - viewport.rect.height);
+            targetY = Mathf.Clamp(targetY, 0f, maxY);
+            var pos = _content.anchoredPosition;
+            pos.y = targetY;
+            _content.anchoredPosition = pos;
+        }
+        else
+        {
+            float targetX = range.startPos;
+            float maxX = Mathf.Max(0f, _content.rect.width - viewport.rect.width);
+            targetX = Mathf.Clamp(targetX, 0f, maxX);
+            var pos = _content.anchoredPosition;
+            pos.x = -targetX;
+            _content.anchoredPosition = pos;
+        }
 
         tabsItemSelectorManager.TabsController.SetActiveSection(sectionName);
     }

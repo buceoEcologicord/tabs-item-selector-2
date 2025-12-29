@@ -8,7 +8,7 @@ Running the code:
 - To launch the UI Call public method TabsItemSelectorManager.CreateTabsItemSelector()
 
 tabs:
-- Tabs prefabs must have buttons or toggle (The selected color change is pulled from button.colors or toggle.colors)
+- Tabs prefabs must have buttons (upcoming functionality: or toggle to filter) (The selected color change is pulled from button.colors or toggle.colors)
 - Add TabBuilder component to Tab prefab and assign references
 - Configure selected tab color/Image from the prefab: You can use button/Toggle transition colors or image swap to show selected/unselected state
   -- For color change when selected: Assign the tab prefab icon gameObject with an Image component to toggle/button target graphics and choose the color transition in the button/toggle options

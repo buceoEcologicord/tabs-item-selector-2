@@ -35,6 +35,19 @@ public class TabBuilder : MonoBehaviour
     {
         // toggle.onValueChanged.RemoveAllListeners(); // Uncomment to override other previous listeners  
         toggle.onValueChanged.AddListener((isOn) => { if (isOn) HandleClick(); });
+        
+        // Logic to use tabs as item filters
+        TabsItemSelectorManager tabsManager = FindAnyObjectByType <TabsItemSelectorManager>();
+        var sectionController = tabsManager.SectionsController;
+        Debug.Log(tabsManager.gameObject.name);
+        toggle.onValueChanged.AddListener((isOn) => 
+        {
+            if (isOn)
+            {
+                sectionController.JumpToSection(_category.CategoryName);
+            }
+        });
+
     }
     void HandleClick()
     {

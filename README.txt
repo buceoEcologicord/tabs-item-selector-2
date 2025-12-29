@@ -3,6 +3,14 @@ Hi! I'm rafamaster3 and I built this component with plenty of love (and time) so
 Have a great coding session ;)
 
 -------------------------------
+
+Functions:
+- Automatically populate items and tabs with your items and categories
+- Navigate items clicking on tabs or use them as filters for easier search!!
+- Add many labels and interactions to your items, like price label, more info button, select as many as you want as buttons or use toggles for a unique selection per category
+- Adjust everything from just 3 objects: Tab Selector Manager, Item prefab, Tab Prefab
+
+-------------------------------
 Setup instructions:
 
 Running the code:

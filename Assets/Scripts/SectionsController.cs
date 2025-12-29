@@ -46,6 +46,7 @@ public class SectionsController : MonoBehaviour
         bool isVertical = _scrollRect.vertical;
 
         string active = null;
+        GameObject furtherActiveSection = null;
 
         if (isVertical)
         {
@@ -75,8 +76,14 @@ public class SectionsController : MonoBehaviour
 
             // If scrolled to bottom, ensure last section is active
             float maxY = Mathf.Max(0f, _content.rect.height - viewport.rect.height);
+
+            foreach (var section in sectionsList)
+            {
+                if (section.activeSelf) furtherActiveSection = section;
+            }
+
             if (_content.anchoredPosition.y >= maxY - 0.001f && sectionsList.Count > 0)
-                active = sectionsList[sectionsList.Count - 1].name;
+                active = furtherActiveSection.name;
         }
         else // horizontal scroll handling
         {
@@ -104,10 +111,16 @@ public class SectionsController : MonoBehaviour
                 }
             }
 
-            // If scrolled to far right (content end), ensure last section is active
+            // If scrolled to far right (content end), ensure last section is active, only if 
             float maxX = Mathf.Max(0f, _content.rect.width - viewport.rect.width);
+
+            foreach (var section in sectionsList)
+            {
+                if (section.activeSelf) furtherActiveSection = section;
+            }
+
             if (currentX >= maxX - 0.001f && sectionsList.Count > 0)
-                active = sectionsList[sectionsList.Count - 1].name;
+                active = furtherActiveSection.name;
         }
 
         if (!string.IsNullOrEmpty(active))
@@ -242,12 +255,15 @@ public class SectionsController : MonoBehaviour
 
         foreach (GameObject section in sectionsList)
         {
-            var rectTransform = (RectTransform)section.transform;
-            float height = rectTransform.rect.height;
-            float top = cursorY;
-            float bottom = cursorY + height;
-            _sectionRanges.Add((section.name, top, bottom));
-            cursorY = bottom + spacing;
+            if (section.activeSelf)
+            {
+                var rectTransform = (RectTransform)section.transform;
+                float height = rectTransform.rect.height;
+                float top = cursorY;
+                float bottom = cursorY + height;
+                _sectionRanges.Add((section.name, top, bottom));
+                cursorY = bottom + spacing;
+            }
         }
 
         // Adds bottom padding for the bottom limit of the content (CONSIDER REMOVING)
@@ -258,7 +274,7 @@ public class SectionsController : MonoBehaviour
         // Finds index of sectionsList by categoryName, depends on section GameObjects having same names as categories and being in the same order.
         // This should be ok since both are populated from the same Categories list in TabsItemSelectorManager and section GameObjects are named after category names when instantiated in this SectionsController script.
 
-        int idx = sectionsList.FindIndex(s => s.name == sectionName);
+        int idx = _sectionRanges.FindIndex(s => s.sectionName == sectionName);
         if (idx < 0) return;
         var range = _sectionRanges[idx];
 
@@ -285,5 +301,15 @@ public class SectionsController : MonoBehaviour
         }
 
         tabsItemSelectorManager.TabsController.SetActiveSection(sectionName);
+    }
+
+    public void FilterSections(string sectionName, bool isActive)
+    {
+        int idx = sectionsList.FindIndex(s => s.name == sectionName);
+        sectionsList[idx].SetActive(isActive);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_content);        
+        ComputeSectionRanges();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_content);        
+        
     }
 }

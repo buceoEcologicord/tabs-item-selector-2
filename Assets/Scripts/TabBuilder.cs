@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -9,8 +10,11 @@ public class TabBuilder : MonoBehaviour
     [SerializeField] TextMeshProUGUI tabLabel;
     [SerializeField] Color tabColor;
     [SerializeField] Selectable clickableComponent;
+    [SerializeField] string tabManagerGameObjectName;
 
     Category _category;
+
+    SectionsController sectionsController;
 
     public UnityEvent<Category> OnClick = new UnityEvent<Category>();
 
@@ -35,18 +39,30 @@ public class TabBuilder : MonoBehaviour
     {
         // toggle.onValueChanged.RemoveAllListeners(); // Uncomment to override other previous listeners  
         toggle.onValueChanged.AddListener((isOn) => { if (isOn) HandleClick(); });
-        
+
         // Logic to use tabs as item filters
-        TabsItemSelectorManager tabsManager = FindAnyObjectByType <TabsItemSelectorManager>();
-        var sectionController = tabsManager.SectionsController;
-        Debug.Log(tabsManager.gameObject.name);
-        toggle.onValueChanged.AddListener((isOn) => 
+        var tabsManagerGO = GameObject.Find(tabManagerGameObjectName);
+
+        if (tabsManagerGO != null)
         {
-            if (isOn)
+            var tabsManager = tabsManagerGO.GetComponent<TabsItemSelectorManager>();
+
+            if (tabsManagerGO != null)
             {
-                sectionController.JumpToSection(_category.CategoryName);
+
+                 sectionsController = tabsManager.SectionsController;
+
+                toggle.onValueChanged.AddListener((isOn) =>
+                {
+                    ManageToggleFilter(isOn);
+                    
+                });
             }
-        });
+        }
+        else
+        {
+            Debug.LogError("Tab Manager not found with the name " + tabManagerGameObjectName);
+        }
 
     }
     void HandleClick()
@@ -74,18 +90,23 @@ public class TabBuilder : MonoBehaviour
         else if (clickableComponent is Toggle toggle)
             SetToggleActions(toggle);        
     }    
-
-    
-
-    private void OnValidate()
+    void ManageToggleFilter(bool isOn)
     {
-        if (clickableComponent != null &&
-            !(clickableComponent is Button) &&
-            !(clickableComponent is Toggle))
+        if (isOn)
         {
-            Debug.LogError($"Item Builder{name}: Only Button or Toggle are allowed as clicable component in the Item prefab's ItemBuilder component");
-            clickableComponent = null;
+            sectionsController.FilterSections(_category.CategoryName, isOn);
+            StartCoroutine(WaitAFrameToJump());
         }
+        else
+        {
+            sectionsController.FilterSections(_category.CategoryName, isOn);
+        }
+    }
+    IEnumerator WaitAFrameToJump()
+    {
+        yield return null;
+        sectionsController.JumpToSection(_category.CategoryName);
+
     }
     private void OnDestroy()
     {

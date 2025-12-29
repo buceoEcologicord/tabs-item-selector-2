@@ -49,6 +49,10 @@ public class TabsController : MonoBehaviour
     {
         button.onClick.AddListener(() => { onTabClicked?.Invoke(sectionName); });
     }
+    public void AddTabToggleAction(Toggle toggle, Action<string> onTabClicked, string sectionName)
+    {
+        toggle.onValueChanged.AddListener((isOn) => { onTabClicked?.Invoke(sectionName); });
+    }
 
     public void PopulateTabs()
     {
@@ -104,6 +108,7 @@ public class TabsController : MonoBehaviour
             {
                 isToggle = true;
                 components.toggle = tabToggle;
+
 
                 if (_swapImageWhenSelected)
                 {

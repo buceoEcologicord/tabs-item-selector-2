@@ -1,24 +1,26 @@
-Hi! I'm rafamaster3 and I built this component with plenty of love (and time) so everyone can make better games. Please contact me through GitHub for any help! Also share this code and give a mention on the credits to your game to help others!
+Hi! I'm rafamaster3 and I built this component with plenty of love (and time) so everyone can make better games. Please contact me through GitHub for any help! 
+
+Also share this code and give a mention on the credits of your game to help others!
 
 Have a great coding session ;)
 
 -------------------------------
 
-Functions:
+#Functions:
 - Automatically populate items and tabs with your items and categories
 - Navigate items clicking on tabs or use them as filters for easier search!!
 - Add many labels and interactions to your items, like price label, more info button, select as many as you want as buttons or use toggles for a unique selection per category
 - Adjust everything from just 3 objects: Tab Selector Manager, Item prefab, Tab Prefab
 
 -------------------------------
-Setup instructions:
+#Setup instructions:
 
-Running the code:
+##Running the code:
 
 - To launch the UI Call public method TabsItemSelectorManager.CreateTabsItemSelector()
 - To add functionality to items or tabs use the API's marked section in ItemBuilder and TabBuilder scripts
 
-Inspector setup:
+## Inspector setup:
 - Use samples as guide to add all necessary game objects and components 
 - Create item prefab, tab prefab and section prefab following your needs, use sample prefabs as guide
   -- Section prefab must have the GridLayoutGroup and the ToggleGroup component you want to use in its child "ItemsGroupLayout"
@@ -32,7 +34,7 @@ Inspector setup:
   -- TabBuilder component in the Tab prefab
   -- ItemBuilder component in the Item prefab
 
-Creating and loading items and categories:
+##Creating and loading items and categories:
 - Create categories and items ScriptableObjects using the CreateAssetMenu option in CategorySO and ItemSO scripts
 - *** Important: Assign unique names to each category
 - *** Important: Assign a category to each item
@@ -40,14 +42,14 @@ Creating and loading items and categories:
 - Tip: create your own script to load items and categories dynamically if you want
 
 
-tabs:
+##tabs:
 - Tabs prefabs must have buttons (used to navigate or add personalized actions) or toggles (used as filters and navigation or add personalized actions) 
   -- The active section and selected tab color or image is pulled from button/toggle colors and image
      --- Configure your color/toggle colors according to your needs. Use samples as guide
 - You can also set the color change or image swap to indicate the active tab directly from the TabSelectorManager (see Adjusments section below)
 - Tip: when setting toggles/buttons make sure the color and alpha is the same for the image color, normal, selected and pressed colors to avoid flickering when switching between active categories
 
-Items:
+##Items:
 - Items prefabs must have button or toggle component to handle clicks
 - Configure selected item color/Image from the prefab: You can use button/Toggle transition colors or image swap to show selected/unselected state
   -- For color change when selected: Assign the item prefab icon gameObject with an Image component to toggle/button target graphics and choose the color transition in the button/toggle options
@@ -64,7 +66,7 @@ Items:
 
 ------------------------------------------
 
-Adjustments instructions:
+#Adjustments instructions:
 TabManager:
 - Use Swap Image When Selected to change the tab image when active/inactive (you can also do this from the button/toggle option of the prefab). In that case, assign the selected and unselected images
 - ForceColors to set button/toggle colors on tabs directly from TabManager settings

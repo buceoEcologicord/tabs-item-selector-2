@@ -1,6 +1,8 @@
 Hi! I'm rafamaster3 and I built this component with plenty of love (and time) so everyone can make better games. Please contact me through GitHub for any help! 
 
 Also share this code and give a mention on the credits of your game to help others!
+" Tabs item selector code by @rafamaster3
+https://github.com/buceoEcologicord/tabs-item-selector-2/tree/main "
 
 Have a great coding session ;)
 
